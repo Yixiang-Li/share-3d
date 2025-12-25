@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ccff00">
+    <title>Claim Your Gift: Coffee Break 3D Model | Meshy</title>
+
+    <!-- ================================================================================== -->
+    <!--                          社交媒体预览配置 (Social Media Preview)                     -->
+    <!-- ================================================================================== -->
+
+    <!-- 1. Twitter (X) 配置: Direct Jump Mode -->
+    <!-- 使用 summary_large_image，点击图片直接跳转网页，流失率最低 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@MeshyAI">
+    <meta name="twitter:title" content="Get this 3D Model for Free: Coffee Break">
+    <meta name="twitter:description" content="Invited by yixiangli. Join Meshy to view, edit and download this AI-generated 3D asset.">
+    <!-- 封面图：必须是静态图片 -->
+    <meta name="twitter:image" content="https://cdn.meshy.ai/referral-assets/cup_cdn.png">
+
+    <!-- 2. Discord / Telegram / WhatsApp 配置: 视频增强模式 -->
+    <!-- 关键: og:type=video.other 让 Telegram/Discord 尝试直接播放 MP4 -->
+    <meta property="og:type" content="video.other">
+    <meta property="og:title" content="Your friend gifted you a free month on Meshy!">
+    <meta property="og:description" content="Check out this 'Coffee Break' 3D model. Claim your reward to start creating.">
+    <meta property="og:url" content="https://yixiang-li.github.io/3d-viewer/">
+    <meta property="og:site_name" content="Meshy AI">
+
+    <!-- 优先展示视频 (Telegram/Discord 支持) -->
+    <meta property="og:video" content="https://cdn.meshy.ai/referral-assets/cup2.mp4">
+    <meta property="og:video:secure_url" content="https://cdn.meshy.ai/referral-assets/cup2.mp4">
+    <meta property="og:video:type" content="video/mp4">
+    <meta property="og:video:width" content="1280">
+    <meta property="og:video:height" content="720">
+    
+    <!-- 兜底图片 -->
+    <meta property="og:image" content="https://cdn.meshy.ai/referral-assets/cup_cdn.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        meshy: {
+                            bg: '#050505',
+                            card: '#111111',
+                            accent: '#ccff00',
+                            accentHover: '#b3e600',
+                            text: '#ffffff',
+                            subtext: '#9ca3af',
+                            border: '#222222',
+                            panel: 'rgba(20, 20, 20, 0.85)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neon': '0 0 20px rgba(204, 255, 0, 0.25)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        body { background-color: #050505; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+        /* 布局系统 */
+        #app-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 55vh 1fr; 
+            width: 100vw;
+            min-height: 100vh;
+        }
+
+        @media (min-width: 1024px) {
+            #app-layout {
+                grid-template-columns: 1.2fr 0.8fr;
+                grid-template-rows: 100vh;
+            }
+        }
+
+        #canvas-col {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
+            overflow: hidden;
+        }
+
+        #content-col {
+            position: relative;
+            z-index: 10;
+            background: #050505;
+            border-top: 1px solid #222;
+        }
+
+        @media (min-width: 1024px) {
+            #content-col {
+                border-top: none;
+                border-left: 1px solid #222;
+            }
+        }
+
+        /* UI 组件样式 */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            background: #ccff00;
+            cursor: pointer;
+            margin-top: -3px;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #444;
+            border-radius: 2px;
+        }
+
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .top-tool-btn {
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            color: #9ca3af; border-radius: 6px; transition: all 0.2s;
+        }
+        .top-tool-btn:hover, .top-tool-btn.active { color: white; background: rgba(255, 255, 255, 0.1); }
+
+        .dock-btn {
+            width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+            color: #6b7280; border-left: 2px solid transparent; transition: all 0.2s;
+        }
+        .dock-btn:hover { color: white; background: rgba(255,255,255,0.05); }
+        .dock-btn.active { color: #ccff00; border-left-color: #ccff00; background: rgba(204,255,0,0.05); }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+        @keyframes flash { 0% { opacity: 1; } 100% { opacity: 0; } }
+        .do-flash { position: fixed; inset: 0; background: white; z-index: 100; animation: flash 0.3s ease-out forwards; pointer-events: none; }
+    </style>
+
+    <script type="importmap">
+        { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+    </script>
+</head>
+<body class="antialiased">
+
+    <!-- 布局容器 -->
+    <div id="app-layout">
+        
+        <!-- 左侧/上方: 3D 区域 -->
+        <div id="canvas-col">
+            <div id="canvas-wrapper" class="w-full h-full"></div>
+            
+            <!-- 1. 左侧垂直停靠栏 -->
+            <div id="landing-left-dock" class="absolute top-4 left-4 bottom-4 w-12 bg-[#111]/90 border border-white/10 rounded-lg flex flex-col items-center py-2 z-20 backdrop-blur-md">
+                <button class="dock-btn active" title="Model"><i class="fa-solid fa-cube"></i></button>
+                <button class="dock-btn" title="Texture"><i class="fa-solid fa-layer-group"></i></button>
+                <button class="dock-btn" title="Environment"><i class="fa-regular fa-image"></i></button>
+                <div class="flex-1"></div>
+                <button class="dock-btn" title="Settings"><i class="fa-solid fa-gear"></i></button>
+            </div>
+
+            <!-- 2. 顶部工具栏 -->
+            <div id="landing-top-bar" class="absolute top-4 left-20 right-4 h-10 flex items-center justify-between z-20 pointer-events-none">
+                <div class="glass-panel rounded px-3 py-1 text-[10px] font-mono text-gray-400 flex gap-3 pointer-events-auto h-8 items-center">
+                    <span>Tris: 40.5k</span>
+                    <span>Verts: 26.3k</span>
+                </div>
+
+                <div class="glass-panel rounded-lg px-2 flex items-center gap-1 pointer-events-auto h-9">
+                    <button class="top-tool-btn" onclick="toggleWireframe()" id="btn-wire-land" title="Wireframe">
+                        <i class="fa-solid fa-border-all"></i>
+                    </button>
+                    <div class="w-px h-4 bg-white/10 mx-1"></div>
+                    <button class="top-tool-btn" onclick="togglePBRPopup()" id="btn-pbr-land" title="Material">
+                        <i class="fa-solid fa-circle-half-stroke"></i>
+                    </button>
+                    <button class="top-tool-btn" title="Lighting"><i class="fa-regular fa-sun"></i></button>
+                    <div class="w-px h-4 bg-white/10 mx-1"></div>
+                    <button class="top-tool-btn" title="Grid"><i class="fa-solid fa-border-none"></i></button>
+                </div>
+
+                <div class="flex gap-2 pointer-events-auto">
+                    <button onclick="takeScreenshot()" class="bg-gray-800 hover:bg-gray-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium border border-gray-700 transition flex items-center gap-2">
+                        <i class="fa-solid fa-camera"></i> <span class="hidden sm:inline">Capture</span>
+                    </button>
+                    <div class="bg-yellow-500/10 text-yellow-500 px-3 py-1 rounded-lg text-xs font-bold border border-yellow-500/20 flex items-center">
+                        <i class="fa-solid fa-coins mr-1.5"></i> 1,900
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. PBR 弹窗 -->
+            <div id="pbr-popup" class="hidden absolute top-14 left-1/2 -translate-x-1/2 glass-panel rounded-lg p-3 w-48 z-30 animate-fade-in">
+                <div class="space-y-3">
+                    <div>
+                        <div class="flex justify-between text-[10px] text-gray-400 mb-1">Roughness <span id="val-roughness">0.5</span></div>
+                        <input type="range" min="0" max="1" step="0.01" value="0.5" oninput="updateMaterial('roughness', this.value)">
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px] text-gray-400 mb-1">Metalness <span id="val-metalness">0.1</span></div>
+                        <input type="range" min="0" max="1" step="0.01" value="0.1" oninput="updateMaterial('metalness', this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. 底部状态栏 -->
+            <div id="bottom-bar" class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-[#111] border border-[#333] rounded-full pl-1 pr-5 py-1 flex items-center gap-4 z-20 select-none shadow-lg">
+                <div class="flex items-center gap-1.5 text-[11px] text-[#ccff00] font-bold px-3 py-1.5 bg-[#ccff00]/10 rounded-full uppercase tracking-wide">
+                    <i class="fa-solid fa-bolt"></i> Preview
+                </div>
+                <div class="flex items-center gap-4 text-xs text-gray-400">
+                    <span class="flex items-center gap-1.5 hover:text-white transition cursor-pointer"><i class="fa-solid fa-mouse"></i> Orbit</span>
+                    <span class="flex items-center gap-1.5 hover:text-white transition cursor-pointer"><i class="fa-solid fa-hand"></i> Pan</span>
+                    <span class="flex items-center gap-1.5 hover:text-white transition cursor-pointer"><i class="fa-solid fa-magnifying-glass"></i> Zoom</span>
+                </div>
+            </div>
+
+            <div id="flash-overlay"></div>
+        </div>
+
+        <!-- 右侧/下方: 礼品信息区域 -->
+        <div id="content-col" class="flex flex-col justify-center items-center p-6 lg:p-12 overflow-y-auto custom-scrollbar">
+            
+            <!-- Logo -->
+            <div class="absolute top-6 left-6 lg:top-8 lg:left-8 flex items-center gap-2 text-meshy-accent font-bold text-xl tracking-tight">
+                <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5 9.5 9.75 12 11zm0 2.5l-5-2.5-5 2.5 10 5 10-5-5-2.5-5 2.5z"/></svg>
+                Meshy
+            </div>
+
+            <div class="w-full max-w-lg space-y-6">
+                
+                <!-- Invited By 卡片 (Dynamic) -->
+                <div class="relative group mt-8 lg:mt-0">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-meshy-accent to-blue-500 rounded-2xl opacity-20 group-hover:opacity-40 blur transition duration-500"></div>
+                    <div class="relative bg-meshy-card rounded-xl p-4 flex items-center gap-5 border border-white/10">
+                        <div class="relative shrink-0">
+                            <div class="w-16 h-16 rounded-full p-[2px] bg-gradient-to-tr from-meshy-accent to-transparent">
+                                <img id="user-avatar" src="" class="w-full h-full rounded-full bg-black object-cover">
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 bg-black rounded-full p-1">
+                                <i class="fa-solid fa-certificate text-meshy-accent text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-[10px] text-meshy-accent font-bold tracking-widest uppercase mb-1">Official Invitation</p>
+                            <div class="flex items-baseline gap-2">
+                                <h3 id="user-name" class="text-white font-bold text-lg truncate">...</h3>
+                                <span class="text-xs text-gray-500">invited you</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1 truncate">"Check out this 3D model I made!"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 营销文案 -->
+                <div class="text-center lg:text-left py-4">
+                    <h1 class="text-3xl lg:text-5xl font-extrabold text-white leading-tight mb-4">
+                        Unlock Your <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-meshy-accent to-white">Creative Potential</span>
+                    </h1>
+                    <p class="text-gray-400 text-sm lg:text-base leading-relaxed">
+                        Claim your free month of Meshy Pro. Experience ultra-fast 3D generation, high-poly downloads, and AI texturing tools.
+                    </p>
+                </div>
+
+                <!-- 礼品详情卡 + 主按钮 -->
+                <div class="bg-gradient-to-b from-white/5 to-transparent p-6 rounded-2xl border border-white/5">
+                    <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
+                        <div>
+                            <div class="text-white font-bold text-lg">Pro Plan Trial</div>
+                            <div class="text-meshy-accent text-xs font-mono">CODE: <span id="invite-code-display">...</span></div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-gray-400 line-through text-sm">$20.00</div>
+                            <div class="text-white font-bold text-xl">FREE</div>
+                        </div>
+                    </div>
+                    
+                    <a id="main-cta" href="#" class="w-full bg-[#ccff00] hover:bg-[#b3e600] text-black font-[800] text-lg py-4 rounded-xl transition-all shadow-neon flex items-center justify-center gap-2 group no-underline">
+                        Register & Claim Gift
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    
+                    <div class="mt-4 flex justify-center gap-6 text-[10px] text-gray-500">
+                        <span><i class="fa-regular fa-circle-check mr-1"></i> No Credit Card</span>
+                        <span><i class="fa-regular fa-circle-check mr-1"></i> Cancel Anytime</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 缩略图预览模态框 -->
+    <div id="thumbnail-modal" class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-meshy-card border border-white/10 rounded-2xl p-6 max-w-lg w-full">
+            <h3 class="text-white font-bold mb-4">Thumbnail Generated</h3>
+            <div class="aspect-video bg-black rounded-lg overflow-hidden border border-white/10 mb-4">
+                <img id="modal-img" src="" class="w-full h-full object-cover">
+            </div>
+            <p class="text-sm text-gray-400 mb-6">Right click image to save, or use the button below.</p>
+            <div class="flex gap-3">
+                <button onclick="document.getElementById('thumbnail-modal').classList.add('hidden')" class="flex-1 py-2.5 rounded-lg border border-white/20 text-white hover:bg-white/5">Close</button>
+                <a id="download-link" href="#" download="meshy-thumb.png" class="flex-1 py-2.5 rounded-lg bg-white text-black font-bold text-center hover:bg-gray-200">Download</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // ----------------- Referral Logic -----------------
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref') || 'meshy_user';
+            
+            // 动态数据填充
+            const username = refCode === 'meshy_user' ? 'Meshy Creator' : refCode;
+            const avatar = `https://api.dicebear.com/7.x/notionists/svg?seed=${refCode}`;
+            
+            document.getElementById('user-name').textContent = username;
+            document.getElementById('user-avatar').src = avatar;
+            document.getElementById('invite-code-display').textContent = refCode.toUpperCase();
+            
+            // 链接带参
+            document.getElementById('main-cta').href = `https://app.meshy.ai/register?invite_code=${refCode}`;
+        });
+
+        // ----------------- 3D Viewer Logic -----------------
+        const container = document.getElementById('canvas-wrapper');
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+        camera.position.set(3.5, 2.5, 4.5);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const mainLight = new THREE.DirectionalLight(0xffffff, 1.8);
+        mainLight.position.set(5, 8, 5);
+        mainLight.castShadow = true;
+        mainLight.shadow.mapSize.set(1024, 1024);
+        scene.add(mainLight);
+        const rimLight = new THREE.SpotLight(0x6688ff, 3);
+        rimLight.position.set(-5, 2, -5);
+        scene.add(rimLight);
+
+        let modelMaterials = [];
+        let isWireframe = false;
+
+        function createCoffeeCup() {
+            const group = new THREE.Group();
+            const matPaper = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5, metalness: 0.1, name: 'paper' });
+            const matSleeve = new THREE.MeshStandardMaterial({ color: 0xff8800, roughness: 0.8, metalness: 0.0, name: 'sleeve' });
+            const matLid = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.1, name: 'lid' });
+            modelMaterials = [matPaper, matSleeve, matLid];
+
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.65, 1.4, 64), matPaper);
+            body.position.y = 0.7; body.castShadow = true; group.add(body);
+
+            const sleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.81, 0.72, 0.6, 64), matSleeve);
+            sleeve.position.y = 0.7; sleeve.castShadow = true; group.add(sleeve);
+            
+            for(let i=0; i<6; i++) {
+                const ring = new THREE.Mesh(new THREE.TorusGeometry(0.77, 0.005, 4, 64), new THREE.MeshBasicMaterial({color: 0xcc6600}));
+                ring.rotation.x = Math.PI/2; ring.position.y = 0.55 + i*0.06; group.add(ring);
+            }
+
+            const lidGroup = new THREE.Group();
+            const lidRim = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 0.15, 64), matLid);
+            lidRim.position.y = 1.45; lidGroup.add(lidRim);
+            const lidTop = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.8, 0.1, 64), matLid);
+            lidTop.position.y = 1.55; lidGroup.add(lidTop);
+            const hole = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.1, 4, 8), new THREE.MeshStandardMaterial({color:0x000000}));
+            hole.position.set(0, 1.62, 0.5); hole.rotation.x = Math.PI/2; lidGroup.add(hole);
+            lidGroup.castShadow = true; group.add(lidGroup);
+            
+            const plane = new THREE.Mesh(new THREE.PlaneGeometry(8,8), new THREE.ShadowMaterial({opacity:0.3}));
+            plane.rotation.x = -Math.PI/2; plane.receiveShadow = true; group.add(plane);
+
+            return group;
+        }
+        const model = createCoffeeCup();
+        scene.add(model);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.enablePan = false;
+        controls.minDistance = 2;
+        controls.maxDistance = 10;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 2.0;
+        controls.addEventListener('start', () => { });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        function onWindowResize() {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+        window.addEventListener('resize', onWindowResize);
+        onWindowResize();
+
+        // ----------------- UI 交互 -----------------
+        window.updateMaterial = function(prop, val) {
+            const value = parseFloat(val);
+            document.getElementById(`val-${prop}`).innerText = value;
+            modelMaterials.forEach(mat => { if(mat[prop] !== undefined) mat[prop] = value; });
+        };
+
+        window.toggleWireframe = function() {
+            isWireframe = !isWireframe;
+            document.getElementById('btn-wire-land')?.classList.toggle('active', isWireframe);
+            modelMaterials.forEach(mat => { mat.wireframe = isWireframe; });
+        };
+
+        window.togglePBRPopup = function() {
+            const popup = document.getElementById('pbr-popup');
+            const btn = document.getElementById('btn-pbr-land');
+            popup.classList.toggle('hidden');
+            btn?.classList.toggle('active', !popup.classList.contains('hidden'));
+        };
+
+        window.takeScreenshot = function() {
+            const overlay = document.getElementById('flash-overlay');
+            overlay.classList.add('do-flash');
+            setTimeout(() => overlay.classList.remove('do-flash'), 500);
+            
+            renderer.render(scene, camera);
+            try {
+                const dataURL = renderer.domElement.toDataURL('image/png');
+                const modal = document.getElementById('thumbnail-modal');
+                const img = document.getElementById('modal-img');
+                const btn = document.getElementById('download-link');
+                img.src = dataURL;
+                btn.href = dataURL;
+                modal.classList.remove('hidden');
+            } catch (e) { console.error(e); alert("Screenshot failed."); }
+        };
+
+    </script>
+</body>
+</html>
