@@ -20,14 +20,15 @@
 <meta name="twitter:image" content="https://cdn.meshy.ai/referral-assets/image_with_playbtn.png">
 
 <!-- 2. Telegram / Discord / WhatsApp 通用配置 -->
-<!-- 关键：video.other 配合 og:video 能在 Telegram 激活原生播放器 -->
-<!--<meta property="og:type" content="video.other">
+<!-- [必须保留] video.other 告诉 Telegram 这是一个视频内容，从而激活视频自动播放 UI -->
+<!-- 如果删掉此行或改为 website，Telegram 将只显示带播放按钮的静态图，不再自动播放 -->
+<meta property="og:type" content="video.other">
 <meta property="og:title" content="Your friend gifted you a free month on Meshy!">
 <meta property="og:description" content="Check out this 'Coffee Break' 3D model. Claim your reward to start creating.">
 <meta property="og:url" content="https://yixiang-li.github.io/3d-viewer/">
 <meta property="og:site_name" content="Meshy AI">
 
-<!-- [重点修改] 视频源：Telegram/Discord 会直接在此处播放视频。取消了之前的注释 -->
+<!-- 视频源：Telegram/Discord 需要这些标签来展示视频 -->
 <meta property="og:video" content="https://cdn.meshy.ai/referral-assets/cup2.mp4">
 <meta property="og:video:secure_url" content="https://cdn.meshy.ai/referral-assets/cup2.mp4">
 <meta property="og:video:type" content="video/mp4">
