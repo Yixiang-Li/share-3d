@@ -10,34 +10,34 @@
     <!--                          社交媒体预览配置 (Social Media Preview)                     -->
     <!-- ================================================================================== -->
 
-    <!-- 1. Twitter (X) 配置: Direct Jump Mode -->
-    <!-- 使用 summary_large_image，点击图片直接跳转网页，流失率最低 -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@MeshyAI">
-    <meta name="twitter:title" content="Get this 3D Model for Free: Coffee Break">
-    <meta name="twitter:description" content="Invited by yixiangli. Join Meshy to view, edit and download this AI-generated 3D asset.">
-    <!-- 封面图：必须是静态图片 -->
-    <meta name="twitter:image" content="https://cdn.meshy.ai/referral-assets/image_with_playbtn.png">
+<!-- 1. Twitter (X) 专用配置 -->
+<!-- 设置为大图卡片。Twitter 会优先读取此配置并忽略 og:video，从而实现点击图片直接跳转 -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@MeshyAI">
+<meta name="twitter:title" content="Get this 3D Model for Free: Coffee Break">
+<meta name="twitter:description" content="Invited by yixiangli. Join Meshy to view, edit and download this AI-generated 3D asset.">
+<!-- Twitter 封面图：使用带“伪装播放键”的静态图 -->
+<meta name="twitter:image" content="https://cdn.meshy.ai/referral-assets/image_with_playbtn.png">
 
-    <!-- 2. Discord / Telegram / WhatsApp 配置: 视频增强模式 -->
-    <!-- 关键: og:type=video.other 让 Telegram/Discord 尝试直接播放 MP4 -->
-    <meta property="og:type" content="video.other">
-    <meta property="og:title" content="Your friend gifted you a free month on Meshy!">
-    <meta property="og:description" content="Check out this 'Coffee Break' 3D model. Claim your reward to start creating.">
-    <meta property="og:url" content="https://yixiang-li.github.io/3d-viewer/">
-    <meta property="og:site_name" content="Meshy AI">
+<!-- 2. Telegram / Discord / WhatsApp 通用配置 -->
+<!-- 关键：video.other 配合 og:video 能在 Telegram 激活原生播放器 -->
+<!--<meta property="og:type" content="video.other">
+<meta property="og:title" content="Your friend gifted you a free month on Meshy!">
+<meta property="og:description" content="Check out this 'Coffee Break' 3D model. Claim your reward to start creating.">
+<meta property="og:url" content="https://yixiang-li.github.io/3d-viewer/">
+<meta property="og:site_name" content="Meshy AI">
 
-    <!-- 优先展示视频 (Telegram/Discord 支持) -->
-    <!--<meta property="og:video" content="https://cdn.meshy.ai/referral-assets/cup2.mp4">
-    <meta property="og:video:secure_url" content="https://cdn.meshy.ai/referral-assets/cup2.mp4">
-    <meta property="og:video:type" content="video/mp4">
-    <meta property="og:video:width" content="1280">
-    <meta property="og:video:height" content="720">
-    
-    <!-- 兜底图片 -->
-    <meta property="og:image" content="https://cdn.meshy.ai/referral-assets/image_with_playbtn.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+<!-- [重点修改] 视频源：Telegram/Discord 会直接在此处播放视频。取消了之前的注释 -->
+<meta property="og:video" content="https://cdn.meshy.ai/referral-assets/cup2.mp4">
+<meta property="og:video:secure_url" content="https://cdn.meshy.ai/referral-assets/cup2.mp4">
+<meta property="og:video:type" content="video/mp4">
+<meta property="og:video:width" content="1280">
+<meta property="og:video:height" content="720">
+
+<!-- 静态封面图：针对不支持视频的平台（如 WhatsApp）显示 -->
+<meta property="og:image" content="https://cdn.meshy.ai/referral-assets/image_with_playbtn.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
